@@ -9,9 +9,11 @@
 
 I2C_HandleTypeDef hi2c;
 
-int i2c_init()
+enum i2c_operation { i2c_WRITE = 0, i2c_READ = 1}; 
+
+int i2c_init(void)
 {
-    //Configuration of the HAL_I2C_MspInit() API
+    //Configuration of the I2C peripheral
     hi2c1.Instance = I2C1;
 	hi2c1.Init.Timing = 0x10707DBC;
 	hi2c1.Init.OwnAddress1 = //I2C_ADDRESS;
@@ -23,7 +25,74 @@ int i2c_init()
 	hi2c1.Init.NoStretchMode = //I2C_NOSTRETCH_DISABLE;
 
     //Configuration of the device using specified parameters
-    HAL_I2C_Init(&hi2c);  
+    //Check if the above configuration was successfull
+    if(HAL_I2C_Init(&hi2c) != HAL_OK)
+    {
+        //Initialization Error
+        Error_Handler();
+        return 1; 
+    }
+    else
+        return 0;
 }
 
+int i2c_deinit(void)
+{
+    if(HAL_I2C_Init(&hi2c) != HAL_OK)
+    {
+        //Deinitialization Error
+        Error_Handler();
+        return 1; 
+    }
+    else
+        return 0;
+}
+
+int i2c_parent_operation(enum i2c_operation op, I2C_HandleTypeDef* hi2c, uint16_t DevAddress, uint8_t* pData, uint16_t Size, uint32_t Timeout)
+{
+    if(i2c_operation == i2c_WRITE)
+    {
+        if(HAL_StatusTypeDef HAL_I2C_Master_Transmit (I2C_HandleTypeDef * hi2c, uint16_t DevAddress, uint8_t* pData, uint16_t Size, uint32_t Timeout) != HAL_OK)
+        {
+            //Transmittion Error
+            Error_Handler();
+            return 1; 
+        }
+        
+    }
+
+    else if(i2c_operation == i2c_READ)
+    {
+        if(HAL_StatusTypeDef HAL_I2C_Master_Receive(I2C_HandleTypeDef * hi2c, uint16_t DevAddress, uint8_t* pData, uint16_t Size, uint32_t Timeout) != HAL_OK)
+        {
+            //Receiving Error
+            Error_Handler();
+            return 1; 
+        }
+    }
+}
+
+int i2c_child_operation(enum i2c_operation op, I2C_HandleTypeDef* hi2c, uint16_t DevAddress, uint8_t* pData, uint16_t Size, uint32_t Timeout)
+{
+    if(i2c_operation == i2c_WRITE)
+    {
+        if(HAL_StatusTypeDef HAL_I2C_Slave_Transmit (I2C_HandleTypeDef * hi2c, uint16_t DevAddress, uint8_t* pData, uint16_t Size, uint32_t Timeout) != HAL_OK)
+        {
+            //Transmittion Error
+            Error_Handler();
+            return 1; 
+        }
+        
+    }
+
+    else if(i2c_operation == i2c_READ)
+    {
+        if(HAL_StatusTypeDef HAL_I2C_Slave_Receive(I2C_HandleTypeDef * hi2c, uint16_t DevAddress, uint8_t* pData, uint16_t Size, uint32_t Timeout) != HAL_OK)
+        {
+            //Receiving Error
+            Error_Handler();
+            return 1; 
+        }
+    }
+}
 
